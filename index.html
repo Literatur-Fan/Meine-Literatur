@@ -8,490 +8,145 @@
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;1,8..60,300&display=swap" rel="stylesheet">
 <style>
 :root {
-  --ink: #1a1712;
-  --ink2: #4a4540;
-  --ink3: #857e76;
-  --ink4: #b5afa8;
-  --paper: #faf8f4;
-  --paper2: #f2ede6;
-  --paper3: #e8e1d8;
-  --accent: #8b3a2a;
-  --accent2: #c4622e;
-  --gold: #a07828;
-  --green: #3a6b42;
-  --green-bg: #eef4ef;
-  --amber-bg: #fdf3e3;
-  --red-bg: #fcecea;
-  --border: rgba(26,23,18,0.1);
-  --border2: rgba(26,23,18,0.18);
-  --ff-display: 'Playfair Display', Georgia, serif;
-  --ff-body: 'Source Serif 4', Georgia, serif;
+  --ink:#1a1712;--ink2:#4a4540;--ink3:#857e76;--ink4:#b5afa8;
+  --paper:#faf8f4;--paper2:#f2ede6;--paper3:#e8e1d8;
+  --accent:#8b3a2a;--accent2:#c4622e;--gold:#a07828;
+  --green:#3a6b42;--green-bg:#eef4ef;--amber-bg:#fdf3e3;--red-bg:#fcecea;
+  --border:rgba(26,23,18,0.1);--border2:rgba(26,23,18,0.18);
+  --ff-display:'Playfair Display',Georgia,serif;
+  --ff-body:'Source Serif 4',Georgia,serif;
 }
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--ff-body);background:var(--paper);color:var(--ink);font-size:15px;line-height:1.6;min-height:100vh}
 
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+header{border-bottom:1px solid var(--border2);padding:1.5rem 2rem 1.25rem;display:flex;align-items:flex-end;gap:2rem;flex-wrap:wrap;background:var(--paper);position:sticky;top:0;z-index:100}
+.header-title{flex:1;min-width:200px}
+.header-title h1{font-family:var(--ff-display);font-size:2rem;font-weight:400;letter-spacing:-0.02em;line-height:1.1}
+.header-title p{font-size:13px;color:var(--ink3);margin-top:4px;font-style:italic}
+.header-controls{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.search-wrap{position:relative}
+.search-wrap input{font-family:var(--ff-body);background:var(--paper2);border:1px solid var(--border2);border-radius:4px;padding:7px 12px 7px 32px;font-size:13px;color:var(--ink);width:200px;outline:none}
+.search-wrap input:focus{border-color:var(--accent)}
+.search-icon{position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--ink3);font-size:13px;pointer-events:none}
+.btn{font-family:var(--ff-body);background:transparent;border:1px solid var(--border2);border-radius:4px;padding:7px 14px;font-size:13px;color:var(--ink2);cursor:pointer;white-space:nowrap;transition:background .15s}
+.btn:hover{background:var(--paper2)}
+.btn.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+.btn-edit{border-color:var(--gold);color:var(--gold)}
+.btn-edit.on{background:var(--gold);color:#fff}
+.btn-export{border-color:var(--green);color:var(--green)}
+.btn-export:hover{background:var(--green-bg)}
 
-body {
-  font-family: var(--ff-body);
-  background: var(--paper);
-  color: var(--ink);
-  font-size: 15px;
-  line-height: 1.6;
-  min-height: 100vh;
-}
+.stats-bar{background:var(--paper2);border-bottom:1px solid var(--border);padding:.6rem 2rem;display:flex;gap:2rem;font-size:12px;color:var(--ink3);flex-wrap:wrap;align-items:center}
+.stats-bar strong{color:var(--ink);font-weight:600}
+.save-indicator{margin-left:auto;font-size:11px;color:var(--green);opacity:0;transition:opacity .3s}
+.save-indicator.show{opacity:1}
 
-/* ── Header ── */
-header {
-  border-bottom: 1px solid var(--border2);
-  padding: 2rem 2rem 1.5rem;
-  display: flex;
-  align-items: flex-end;
-  gap: 2rem;
-  flex-wrap: wrap;
-  background: var(--paper);
-  position: sticky;
-  top: 0;
-  z-index: 100;
-}
-.header-title { flex: 1; min-width: 200px; }
-.header-title h1 {
-  font-family: var(--ff-display);
-  font-size: 2rem;
-  font-weight: 400;
-  letter-spacing: -0.02em;
-  color: var(--ink);
-  line-height: 1.1;
-}
-.header-title p {
-  font-size: 13px;
-  color: var(--ink3);
-  margin-top: 4px;
-  font-style: italic;
-}
-.header-controls {
-  display: flex;
-  gap: 8px;
-  align-items: center;
-  flex-wrap: wrap;
-}
-.search-wrap {
-  position: relative;
-}
-.search-wrap input {
-  font-family: var(--ff-body);
-  background: var(--paper2);
-  border: 1px solid var(--border2);
-  border-radius: 4px;
-  padding: 7px 12px 7px 32px;
-  font-size: 13px;
-  color: var(--ink);
-  width: 200px;
-  outline: none;
-}
-.search-wrap input:focus { border-color: var(--accent); }
-.search-icon {
-  position: absolute; left: 10px; top: 50%;
-  transform: translateY(-50%);
-  color: var(--ink3); font-size: 13px; pointer-events: none;
-}
-.btn {
-  font-family: var(--ff-body);
-  background: transparent;
-  border: 1px solid var(--border2);
-  border-radius: 4px;
-  padding: 7px 14px;
-  font-size: 13px;
-  color: var(--ink2);
-  cursor: pointer;
-  white-space: nowrap;
-  transition: background .15s, border-color .15s;
-}
-.btn:hover { background: var(--paper2); border-color: var(--border2); }
-.btn.active { background: var(--accent); color: #fff; border-color: var(--accent); }
-.btn-edit { border-color: var(--gold); color: var(--gold); }
-.btn-edit:hover { background: var(--amber-bg); }
-.btn-edit.on { background: var(--gold); color: #fff; }
+main{padding:1.5rem 2rem 4rem;max-width:1100px;margin:0 auto}
+.edit-add-bar{display:none;margin-bottom:1.5rem}
+.edit-mode .edit-add-bar{display:block}
 
-/* ── Stats bar ── */
-.stats-bar {
-  background: var(--paper2);
-  border-bottom: 1px solid var(--border);
-  padding: .6rem 2rem;
-  display: flex;
-  gap: 2rem;
-  font-size: 12px;
-  color: var(--ink3);
-  flex-wrap: wrap;
-}
-.stats-bar strong { color: var(--ink); font-weight: 600; }
+/* Country */
+.country-section{margin-bottom:.875rem;border:1px solid var(--border2);border-radius:6px;overflow:hidden}
+.country-heading{display:flex;align-items:center;gap:12px;padding:.875rem 1.25rem;cursor:pointer;user-select:none;background:var(--paper2);transition:background .15s}
+.country-heading:hover{background:var(--paper3)}
+.country-flag{font-size:20px}
+.country-name{font-family:var(--ff-display);font-size:1.05rem;font-weight:400;font-style:italic;color:var(--ink2);flex:1}
+.country-count{font-size:11px;color:var(--ink3);background:var(--paper);border-radius:20px;padding:2px 10px;border:1px solid var(--border2)}
+.country-chevron{font-size:16px;color:var(--ink3);transition:transform .22s}
+.country-heading.open .country-chevron{transform:rotate(90deg)}
+.country-body{display:none;padding:1rem 1.25rem 1.25rem}
+.country-body.open{display:block}
 
-/* ── Main layout ── */
-main { padding: 1.5rem 2rem 4rem; max-width: 1100px; margin: 0 auto; }
+/* Author grid */
+.author-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(295px,1fr));gap:.875rem}
+.author-card{background:#fff;border:1px solid var(--border);border-radius:6px;overflow:hidden;transition:box-shadow .2s}
+.author-card:hover{box-shadow:0 2px 12px rgba(26,23,18,.08)}
+.card-head{display:flex;align-items:flex-start;gap:12px;padding:1rem 1rem .75rem;cursor:pointer;user-select:none}
+.avatar{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--ff-display);font-size:13px;font-weight:600;flex-shrink:0;border:1px solid var(--border)}
+.card-meta{flex:1}
+.card-meta h3{font-family:var(--ff-display);font-size:1rem;font-weight:600;color:var(--ink);line-height:1.2}
+.card-meta .years{font-size:11px;color:var(--ink3);margin-top:2px;font-style:italic}
+.tag-row{display:flex;gap:4px;flex-wrap:wrap;margin-top:6px}
+.tag{font-size:10px;padding:1px 7px;border-radius:20px;border:1px solid}
+.tag-genre{background:#f0edf8;color:#4a3580;border-color:#c9c0e8}
+.tag-read{background:var(--green-bg);color:#27500a;border-color:#97c459}
+.tag-tbr{background:var(--amber-bg);color:#633806;border-color:#efac27}
+.tag-prio1{background:var(--red-bg);color:#791f1f;border-color:#f09595}
+.expand-btn{color:var(--ink3);font-size:16px;transition:transform .2s;flex-shrink:0;margin-top:2px}
+.card-body{display:none;border-top:1px solid var(--border);padding:.875rem 1rem 1rem}
+.card-body.open{display:block}
+.bio-text{font-size:12.5px;color:var(--ink2);line-height:1.6;font-style:italic;margin-bottom:.875rem;padding-bottom:.75rem;border-bottom:1px solid var(--border)}
+.mini-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:.875rem}
+.mini-stat{background:var(--paper2);border-radius:4px;padding:6px 8px;text-align:center}
+.mini-stat .n{font-size:18px;font-weight:600;font-family:var(--ff-display);color:var(--ink)}
+.mini-stat .l{font-size:10px;color:var(--ink3);margin-top:1px}
+.works-label{font-size:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--ink3);margin-bottom:6px}
+.work-row{display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid var(--border);font-size:12.5px}
+.work-row:last-child{border-bottom:none}
+.dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.dot-read{background:var(--green)}
+.dot-unread{background:var(--paper3);border:1px solid var(--ink4)}
+.work-title{flex:1;color:var(--ink)}
+.work-year{font-size:11px;color:var(--ink3);font-style:italic}
+.prio-badge{font-size:10px;padding:1px 7px;border-radius:20px;border:1px solid}
+.p1{background:var(--red-bg);color:#791f1f;border-color:#f09595}
+.p2{background:var(--amber-bg);color:#633806;border-color:#efac27}
+.p3{background:var(--green-bg);color:#27500a;border-color:#97c459}
+.read-check{font-size:11px;color:var(--green)}
+.edit-actions{display:none;gap:6px;padding:.5rem 1rem;background:var(--amber-bg);border-top:1px solid var(--border)}
+.edit-mode .edit-actions{display:flex}
+.edit-btn{font-family:var(--ff-body);font-size:11px;background:transparent;border:1px solid var(--border2);border-radius:3px;padding:3px 10px;cursor:pointer;color:var(--ink2)}
+.edit-btn:hover{background:var(--paper2)}
+.edit-btn.del{color:#791f1f;border-color:#f09595}
+.edit-btn.del:hover{background:var(--red-bg)}
 
-/* ── Country section ── */
-.country-section { margin-bottom: 3rem; }
-.country-heading {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-bottom: 1.25rem;
-  padding-bottom: .75rem;
-  border-bottom: 1px solid var(--border2);
-}
-.country-flag { font-size: 22px; }
-.country-name {
-  font-family: var(--ff-display);
-  font-size: 1.2rem;
-  font-weight: 400;
-  font-style: italic;
-  color: var(--ink2);
-}
-.country-count {
-  font-size: 12px;
-  color: var(--ink3);
-  background: var(--paper3);
-  border-radius: 20px;
-  padding: 2px 10px;
-  border: 1px solid var(--border);
-}
+/* TBR */
+.tbr-section{margin-top:2.5rem;padding-top:1.5rem;border-top:2px solid var(--border2)}
+.tbr-section h2{font-family:var(--ff-display);font-size:1.35rem;font-weight:400;font-style:italic;margin-bottom:1rem}
+.tbr-prio-group{border:1px solid var(--border2);border-radius:6px;overflow:hidden;margin-bottom:.75rem}
+.tbr-prio-head{display:flex;align-items:center;gap:12px;padding:.75rem 1.25rem;cursor:pointer;user-select:none;background:var(--paper2);transition:background .15s}
+.tbr-prio-head:hover{background:var(--paper3)}
+.tbr-prio-head .prio-badge{font-size:11px;padding:2px 10px}
+.tbr-prio-title{font-family:var(--ff-display);font-size:.95rem;font-style:italic;color:var(--ink2);flex:1}
+.tbr-prio-count{font-size:11px;color:var(--ink3)}
+.tbr-prio-chevron{font-size:16px;color:var(--ink3);transition:transform .22s}
+.tbr-prio-head.open .tbr-prio-chevron{transform:rotate(90deg)}
+.tbr-prio-body{display:none;padding:.375rem 1.25rem .75rem}
+.tbr-prio-body.open{display:block}
+.tbr-row{display:flex;align-items:center;gap:10px;padding:6px 0;border-bottom:1px solid var(--border);font-size:13px}
+.tbr-row:last-child{border-bottom:none}
+.tbr-num{width:24px;text-align:right;font-size:12px;color:var(--ink3);font-style:italic;flex-shrink:0}
+.tbr-move{display:flex;flex-direction:column;gap:1px;flex-shrink:0}
+.tbr-arrow{font-size:9px;line-height:1;padding:1px 4px;background:transparent;border:1px solid var(--border2);border-radius:3px;cursor:pointer;color:var(--ink3);font-family:var(--ff-body)}
+.tbr-arrow:hover:not(:disabled){background:var(--paper3);color:var(--ink)}
+.tbr-arrow:disabled{opacity:.25;cursor:default}
+.tbr-title{flex:1;color:var(--ink)}
+.tbr-author{font-size:12px;color:var(--ink3);font-style:italic}
 
-/* ── Author card ── */
-.author-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 1rem;
-}
-.author-card {
-  background: #fff;
-  border: 1px solid var(--border);
-  border-radius: 6px;
-  overflow: hidden;
-  transition: box-shadow .2s;
-}
-.author-card:hover { box-shadow: 0 2px 12px rgba(26,23,18,.08); }
-.card-head {
-  display: flex;
-  align-items: flex-start;
-  gap: 12px;
-  padding: 1rem 1rem .75rem;
-  cursor: pointer;
-  user-select: none;
-}
-.avatar {
-  width: 40px; height: 40px;
-  border-radius: 50%;
-  display: flex; align-items: center; justify-content: center;
-  font-family: var(--ff-display);
-  font-size: 13px; font-weight: 600;
-  flex-shrink: 0;
-  border: 1px solid var(--border);
-}
-.card-meta { flex: 1; }
-.card-meta h3 {
-  font-family: var(--ff-display);
-  font-size: 1rem;
-  font-weight: 600;
-  color: var(--ink);
-  line-height: 1.2;
-}
-.card-meta .years {
-  font-size: 11px;
-  color: var(--ink3);
-  margin-top: 2px;
-  font-style: italic;
-}
-.tag-row { display: flex; gap: 4px; flex-wrap: wrap; margin-top: 6px; }
-.tag {
-  font-size: 10px;
-  padding: 1px 7px;
-  border-radius: 20px;
-  border: 1px solid;
-  font-family: var(--ff-body);
-}
-.tag-genre { background: #f0edf8; color: #4a3580; border-color: #c9c0e8; }
-.tag-read { background: var(--green-bg); color: #27500a; border-color: #97c459; }
-.tag-tbr { background: var(--amber-bg); color: #633806; border-color: #efac27; }
-.tag-prio1 { background: var(--red-bg); color: #791f1f; border-color: #f09595; }
-
-.expand-btn {
-  color: var(--ink3); font-size: 16px;
-  transition: transform .2s; flex-shrink: 0;
-  margin-top: 2px;
-}
-
-/* ── Card body ── */
-.card-body {
-  display: none;
-  border-top: 1px solid var(--border);
-  padding: .875rem 1rem 1rem;
-}
-.card-body.open { display: block; }
-.bio-text {
-  font-size: 12.5px;
-  color: var(--ink2);
-  line-height: 1.6;
-  font-style: italic;
-  margin-bottom: .875rem;
-  padding-bottom: .75rem;
-  border-bottom: 1px solid var(--border);
-}
-.mini-stats {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 6px;
-  margin-bottom: .875rem;
-}
-.mini-stat {
-  background: var(--paper2);
-  border-radius: 4px;
-  padding: 6px 8px;
-  text-align: center;
-}
-.mini-stat .n { font-size: 18px; font-weight: 600; font-family: var(--ff-display); color: var(--ink); }
-.mini-stat .l { font-size: 10px; color: var(--ink3); margin-top: 1px; }
-.works-label {
-  font-size: 10px; font-weight: 600; letter-spacing: .08em;
-  text-transform: uppercase; color: var(--ink3);
-  margin-bottom: 6px;
-}
-.work-row {
-  display: flex; align-items: center; gap: 8px;
-  padding: 5px 0;
-  border-bottom: 1px solid var(--border);
-  font-size: 12.5px;
-}
-.work-row:last-child { border-bottom: none; }
-.dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
-.dot-read { background: var(--green); }
-.dot-unread { background: var(--paper3); border: 1px solid var(--ink4); }
-.work-title { flex: 1; color: var(--ink); }
-.work-year { font-size: 11px; color: var(--ink3); font-style: italic; }
-.prio-badge {
-  font-size: 10px; padding: 1px 7px; border-radius: 20px;
-  border: 1px solid;
-}
-.p1 { background: var(--red-bg); color: #791f1f; border-color: #f09595; }
-.p2 { background: var(--amber-bg); color: #633806; border-color: #efac27; }
-.p3 { background: var(--green-bg); color: #27500a; border-color: #97c459; }
-.read-check { font-size: 11px; color: var(--green); }
-
-/* ── Edit mode ── */
-.edit-actions {
-  display: none;
-  gap: 6px;
-  padding: .5rem 1rem;
-  background: var(--amber-bg);
-  border-top: 1px solid var(--border);
-}
-.edit-mode .edit-actions { display: flex; }
-.edit-btn {
-  font-family: var(--ff-body);
-  font-size: 11px;
-  background: transparent;
-  border: 1px solid var(--border2);
-  border-radius: 3px;
-  padding: 3px 10px;
-  cursor: pointer;
-  color: var(--ink2);
-}
-.edit-btn:hover { background: var(--paper2); }
-.edit-btn.del { color: #791f1f; border-color: #f09595; }
-.edit-btn.del:hover { background: var(--red-bg); }
-
-/* ── Modal ── */
-.modal-bg {
-  display: none;
-  position: fixed; inset: 0;
-  background: rgba(26,23,18,.5);
-  z-index: 1000;
-  align-items: center;
-  justify-content: center;
-  padding: 1rem;
-}
-.modal-bg.open { display: flex; }
-.modal {
-  background: var(--paper);
-  border: 1px solid var(--border2);
-  border-radius: 8px;
-  padding: 1.5rem;
-  width: 100%;
-  max-width: 620px;
-  max-height: 90vh;
-  overflow-y: auto;
-}
-.modal h2 {
-  font-family: var(--ff-display);
-  font-size: 1.3rem;
-  font-weight: 600;
-  margin-bottom: 1.25rem;
-  padding-bottom: .75rem;
-  border-bottom: 1px solid var(--border);
-}
-.form-row { margin-bottom: .875rem; }
-.form-row label {
-  display: block;
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: .06em;
-  text-transform: uppercase;
-  color: var(--ink3);
-  margin-bottom: 4px;
-}
-.form-row input,
-.form-row textarea,
-.form-row select {
-  font-family: var(--ff-body);
-  width: 100%;
-  background: #fff;
-  border: 1px solid var(--border2);
-  border-radius: 4px;
-  padding: 7px 10px;
-  font-size: 13px;
-  color: var(--ink);
-  outline: none;
-}
-.form-row input:focus,
-.form-row textarea:focus { border-color: var(--accent); }
-.form-row textarea { height: 72px; resize: vertical; }
-.form-grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-.works-editor { margin-top: .5rem; }
-.work-edit-row {
-  display: grid;
-  grid-template-columns: 1fr 64px 90px 80px 28px;
-  gap: 6px;
-  margin-bottom: 6px;
-  align-items: center;
-}
-.work-edit-row input,
-.work-edit-row select {
-  font-family: var(--ff-body);
-  background: #fff;
-  border: 1px solid var(--border2);
-  border-radius: 3px;
-  padding: 5px 7px;
-  font-size: 12px;
-  color: var(--ink);
-  width: 100%;
-  outline: none;
-}
-.work-edit-row input:focus,
-.work-edit-row select:focus { border-color: var(--accent); }
-.rm-btn {
-  background: transparent;
-  border: none;
-  color: var(--ink3);
-  cursor: pointer;
-  font-size: 15px;
-  padding: 2px;
-  border-radius: 3px;
-}
-.rm-btn:hover { color: #791f1f; background: var(--red-bg); }
-.add-work-btn {
-  font-family: var(--ff-body);
-  font-size: 12px;
-  background: transparent;
-  border: 1px dashed var(--border2);
-  border-radius: 3px;
-  padding: 5px 12px;
-  width: 100%;
-  cursor: pointer;
-  color: var(--ink3);
-  margin-top: 2px;
-}
-.add-work-btn:hover { background: var(--paper2); }
-.modal-footer {
-  display: flex;
-  justify-content: flex-end;
-  gap: 8px;
-  margin-top: 1.25rem;
-  padding-top: .875rem;
-  border-top: 1px solid var(--border);
-}
-.btn-cancel-m {
-  font-family: var(--ff-body);
-  background: transparent;
-  border: 1px solid var(--border2);
-  border-radius: 4px;
-  padding: 8px 18px;
-  font-size: 13px;
-  cursor: pointer;
-  color: var(--ink2);
-}
-.btn-save-m {
-  font-family: var(--ff-body);
-  background: var(--accent);
-  border: 1px solid var(--accent);
-  border-radius: 4px;
-  padding: 8px 18px;
-  font-size: 13px;
-  cursor: pointer;
-  color: #fff;
-  font-weight: 600;
-}
-.btn-save-m:hover { background: var(--accent2); border-color: var(--accent2); }
-
-/* ── TBR section ── */
-.tbr-section {
-  margin-top: 3rem;
-  padding-top: 2rem;
-  border-top: 2px solid var(--border2);
-}
-.tbr-section h2 {
-  font-family: var(--ff-display);
-  font-size: 1.4rem;
-  font-weight: 400;
-  font-style: italic;
-  margin-bottom: 1.25rem;
-}
-.tbr-list { }
-.tbr-row {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 8px 0;
-  border-bottom: 1px solid var(--border);
-  font-size: 13px;
-}
-.tbr-row:last-child { border-bottom: none; }
-.tbr-num {
-  width: 24px; text-align: right;
-  font-size: 12px; color: var(--ink3);
-  font-style: italic; flex-shrink: 0;
-}
-.tbr-title { flex: 1; color: var(--ink); }
-.tbr-author { font-size: 12px; color: var(--ink3); font-style: italic; }
-
-/* ── Empty state ── */
-.empty {
-  padding: 3rem;
-  text-align: center;
-  color: var(--ink3);
-  font-style: italic;
-}
-
-/* ── Add country btn ── */
-.add-author-bar {
-  display: none;
-  margin-bottom: 2rem;
-}
-.edit-mode .add-author-bar { display: block; }
-
-/* ── Footer ── */
-footer {
-  text-align: center;
-  font-size: 11px;
-  color: var(--ink4);
-  padding: 2rem;
-  border-top: 1px solid var(--border);
-  font-style: italic;
-}
-
-@media (max-width: 600px) {
-  header { padding: 1.25rem 1rem 1rem; gap: 1rem; }
-  main { padding: 1rem 1rem 3rem; }
-  .stats-bar { padding: .5rem 1rem; }
-  .author-grid { grid-template-columns: 1fr; }
-  .header-title h1 { font-size: 1.5rem; }
-}
+/* Modal */
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(26,23,18,.5);z-index:1000;align-items:center;justify-content:center;padding:1rem}
+.modal-bg.open{display:flex}
+.modal{background:var(--paper);border:1px solid var(--border2);border-radius:8px;padding:1.5rem;width:100%;max-width:620px;max-height:90vh;overflow-y:auto}
+.modal h2{font-family:var(--ff-display);font-size:1.3rem;font-weight:600;margin-bottom:1.25rem;padding-bottom:.75rem;border-bottom:1px solid var(--border)}
+.form-row{margin-bottom:.875rem}
+.form-row label{display:block;font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--ink3);margin-bottom:4px}
+.form-row input,.form-row textarea,.form-row select{font-family:var(--ff-body);width:100%;background:#fff;border:1px solid var(--border2);border-radius:4px;padding:7px 10px;font-size:13px;color:var(--ink);outline:none}
+.form-row input:focus,.form-row textarea:focus{border-color:var(--accent)}
+.form-row textarea{height:72px;resize:vertical}
+.form-grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.work-edit-row{display:grid;grid-template-columns:1fr 64px 90px 80px 28px;gap:6px;margin-bottom:6px;align-items:center}
+.work-edit-row input,.work-edit-row select{font-family:var(--ff-body);background:#fff;border:1px solid var(--border2);border-radius:3px;padding:5px 7px;font-size:12px;color:var(--ink);width:100%;outline:none}
+.work-edit-row input:focus,.work-edit-row select:focus{border-color:var(--accent)}
+.rm-btn{background:transparent;border:none;color:var(--ink3);cursor:pointer;font-size:15px;padding:2px;border-radius:3px}
+.rm-btn:hover{color:#791f1f;background:var(--red-bg)}
+.add-work-btn{font-family:var(--ff-body);font-size:12px;background:transparent;border:1px dashed var(--border2);border-radius:3px;padding:5px 12px;width:100%;cursor:pointer;color:var(--ink3);margin-top:2px}
+.add-work-btn:hover{background:var(--paper2)}
+.modal-footer{display:flex;justify-content:flex-end;gap:8px;margin-top:1.25rem;padding-top:.875rem;border-top:1px solid var(--border)}
+.btn-cancel-m{font-family:var(--ff-body);background:transparent;border:1px solid var(--border2);border-radius:4px;padding:8px 18px;font-size:13px;cursor:pointer;color:var(--ink2)}
+.btn-save-m{font-family:var(--ff-body);background:var(--accent);border:1px solid var(--accent);border-radius:4px;padding:8px 18px;font-size:13px;cursor:pointer;color:#fff;font-weight:600}
+.btn-save-m:hover{background:var(--accent2);border-color:var(--accent2)}
+footer{text-align:center;font-size:11px;color:var(--ink4);padding:2rem;border-top:1px solid var(--border);font-style:italic}
+@media(max-width:600px){header{padding:1.25rem 1rem 1rem;gap:1rem}main{padding:1rem 1rem 3rem}.stats-bar{padding:.5rem 1rem}.author-grid{grid-template-columns:1fr}.header-title h1{font-size:1.5rem}}
 </style>
 </head>
 <body>
@@ -504,54 +159,42 @@ footer {
   <div class="header-controls">
     <div class="search-wrap">
       <span class="search-icon">⌕</span>
-      <input type="text" id="search" placeholder="Suchen…" oninput="render()">
+      <input type="text" id="search" placeholder="Suchen…" oninput="onSearch()">
     </div>
     <button class="btn active" id="f-all" onclick="setFilter('all',this)">Alle</button>
     <button class="btn" id="f-tbr" onclick="setFilter('tbr',this)">TBR</button>
     <button class="btn" id="f-gelesen" onclick="setFilter('gelesen',this)">Gelesen</button>
     <button class="btn btn-edit" id="edit-toggle" onclick="toggleEdit()">Bearbeiten</button>
+    <button class="btn btn-export" onclick="exportHTML()">&#8615; Exportieren</button>
   </div>
 </header>
 
-<div class="stats-bar" id="stats-bar"></div>
+<div class="stats-bar">
+  <span id="stat-text"></span>
+  <span class="save-indicator" id="save-indicator">✓ Gespeichert</span>
+</div>
 
 <main id="main">
-  <div class="add-author-bar">
+  <div class="edit-add-bar">
     <button class="btn" style="border-color:var(--accent);color:var(--accent)" onclick="openModal(null)">+ Neuen Schriftsteller hinzufügen</button>
   </div>
   <div id="content"></div>
 </main>
 
-<footer>Diese Seite enthält keine externe Datenbank &mdash; alle Daten sind direkt in der HTML-Datei gespeichert.</footer>
+<footer>Änderungen werden automatisch im Browser gespeichert &mdash; &bdquo;Exportieren&ldquo; erzeugt die aktualisierte HTML-Datei zum Hochladen auf GitHub.</footer>
 
-<!-- Modal -->
 <div class="modal-bg" id="modal-bg">
   <div class="modal">
     <h2 id="modal-title">Schriftsteller hinzufügen</h2>
     <div class="form-grid2">
-      <div class="form-row">
-        <label>Name <span style="color:#c4622e">*</span></label>
-        <input type="text" id="m-name" placeholder="Vollständiger Name">
-      </div>
-      <div class="form-row">
-        <label>Lebensdaten</label>
-        <input type="text" id="m-years" placeholder="z.B. 1828–1910">
-      </div>
+      <div class="form-row"><label>Name <span style="color:#c4622e">*</span></label><input type="text" id="m-name" placeholder="Vollständiger Name"></div>
+      <div class="form-row"><label>Lebensdaten</label><input type="text" id="m-years" placeholder="z.B. 1828–1910"></div>
     </div>
     <div class="form-grid2">
-      <div class="form-row">
-        <label>Land</label>
-        <input type="text" id="m-country" placeholder="z.B. Russland">
-      </div>
-      <div class="form-row">
-        <label>Genres (Komma-getrennt)</label>
-        <input type="text" id="m-genres" placeholder="z.B. Realismus, Roman">
-      </div>
+      <div class="form-row"><label>Land</label><input type="text" id="m-country" placeholder="z.B. Frankreich"></div>
+      <div class="form-row"><label>Genres (Komma-getrennt)</label><input type="text" id="m-genres" placeholder="z.B. Realismus, Roman"></div>
     </div>
-    <div class="form-row">
-      <label>Kurz-Bio</label>
-      <textarea id="m-bio" placeholder="Kurze Beschreibung des Autors…"></textarea>
-    </div>
+    <div class="form-row"><label>Kurz-Bio</label><textarea id="m-bio" placeholder="Kurze Beschreibung des Autors…"></textarea></div>
     <div class="form-row">
       <label>Hauptwerke</label>
       <div style="display:grid;grid-template-columns:1fr 64px 90px 80px 28px;gap:6px;margin-bottom:4px">
@@ -572,547 +215,328 @@ footer {
 </div>
 
 <script>
-// ─────────────────────────────────────────────
-// DATA
-// ─────────────────────────────────────────────
-let authors = [
-  {
-    id: 1, name: "Leo Tolstoi", years: "1828–1910", country: "Russland",
-    genres: ["Realismus", "Epischer Roman"],
-    bio: "Einer der bedeutendsten Schriftsteller der Weltliteratur. Sein umfangreiches Werk umfasst Romane, Novellen und moralphilosophische Schriften. Beeinflusste Generationen von Autoren und Denkern.",
-    works: [
-      { title: "Krieg und Frieden", year: 1869, read: true },
-      { title: "Anna Karenina", year: 1878, read: true },
-      { title: "Auferstehung", year: 1899, read: false, tbr: 2 },
-      { title: "Der Tod des Iwan Iljitsch", year: 1886, read: false, tbr: 1 },
-    ]
-  },
-  {
-    id: 2, name: "Fjodor Dostojewski", years: "1821–1881", country: "Russland",
-    genres: ["Realismus", "Psychologischer Roman"],
-    bio: "Meister des psychologischen Romans und Vorläufer des Existenzialismus. Seine Werke ergründen Schuld, Leiden und den freien Willen in einer dichten, fiebrigen Prosa.",
-    works: [
-      { title: "Schuld und Sühne", year: 1866, read: true },
-      { title: "Der Idiot", year: 1869, read: true },
-      { title: "Die Brüder Karamasow", year: 1880, read: false, tbr: 1 },
-      { title: "Dämonen", year: 1872, read: false, tbr: 2 },
-      { title: "Der Spieler", year: 1867, read: false, tbr: 3 },
-    ]
-  },
-  {
-    id: 3, name: "Charles Dickens", years: "1812–1870", country: "England",
-    genres: ["Viktorianismus", "Sozialkritik"],
-    bio: "Größter englischer Romancier des 19. Jahrhunderts. Sein Werk prangert Armut und soziale Ungerechtigkeit mit unvergleichlichem Humor und Pathos an.",
-    works: [
-      { title: "Oliver Twist", year: 1839, read: true },
-      { title: "David Copperfield", year: 1850, read: true },
-      { title: "Große Erwartungen", year: 1861, read: true },
-      { title: "Bleak House", year: 1853, read: false, tbr: 1 },
-      { title: "Dombey und Sohn", year: 1848, read: false, tbr: 3 },
-    ]
-  },
-  {
-    id: 4, name: "Jane Austen", years: "1775–1817", country: "England",
-    genres: ["Regency-Roman", "Soziale Satire"],
-    bio: "Meisterin des ironischen gesellschaftlichen Romans. Ihre Werke erkunden Heirat, Moral und weibliche Autonomie in der englischen Gentry mit trockenem Witz.",
-    works: [
-      { title: "Stolz und Vorurteil", year: 1813, read: true },
-      { title: "Sinn und Sinnlichkeit", year: 1811, read: true },
-      { title: "Emma", year: 1815, read: true },
-      { title: "Northanger Abbey", year: 1817, read: false, tbr: 2 },
-      { title: "Überredung", year: 1817, read: false, tbr: 1 },
-    ]
-  },
-  {
-    id: 5, name: "Charlotte Brontë", years: "1816–1855", country: "England",
-    genres: ["Viktorianismus", "Gothischer Roman"],
-    bio: "Die älteste der Brontë-Schwestern, bekannt für ihre leidenschaftlichen, introspektiven Romane. Jane Eyre revolutionierte die Ich-Erzählung.",
-    works: [
-      { title: "Jane Eyre", year: 1847, read: true },
-      { title: "Shirley", year: 1849, read: false, tbr: 2 },
-      { title: "Villette", year: 1853, read: false, tbr: 1 },
-    ]
-  },
-  {
-    id: 6, name: "Emily Brontë", years: "1818–1848", country: "England",
-    genres: ["Viktorianismus", "Gothischer Roman"],
-    bio: "Schrieb mit Sturmhöhe einen der intensivsten Liebesromane der englischen Literatur. Trotz nur eines Romans gilt sie als literarische Ausnahmeerscheinung.",
-    works: [
-      { title: "Sturmhöhe", year: 1847, read: true },
-    ]
-  },
-  {
-    id: 7, name: "Anne Brontë", years: "1820–1849", country: "England",
-    genres: ["Viktorianismus", "Sozialkritik"],
-    bio: "Die jüngste der drei Schwestern, oft unterschätzt. Die Herrin von Wildfell Hall ist ein frühes feministisches Werk über häusliche Gewalt und weibliche Unabhängigkeit.",
-    works: [
-      { title: "Agnes Grey", year: 1847, read: false, tbr: 2 },
-      { title: "Die Herrin von Wildfell Hall", year: 1848, read: false, tbr: 1 },
-    ]
-  },
-  {
-    id: 8, name: "George Eliot", years: "1819–1880", country: "England",
-    genres: ["Realismus", "Psychologischer Roman"],
-    bio: "Pseudonym von Mary Ann Evans. Eine der bedeutendsten englischen Romancierinnen, die psychologische Tiefe mit sozialer Analyse verband. Middlemarch gilt als einer der größten englischen Romane.",
-    works: [
-      { title: "Middlemarch", year: 1872, read: false, tbr: 1 },
-      { title: "Die Mühle am Floss", year: 1860, read: false, tbr: 2 },
-      { title: "Silas Marner", year: 1861, read: false, tbr: 3 },
-    ]
-  },
-  {
-    id: 9, name: "E. M. Forster", years: "1879–1970", country: "England",
-    genres: ["Modernismus", "Gesellschaftsroman"],
-    bio: "Englischer Romancier, der soziale Klasse, Konventionen und persönliche Beziehungen mit feinem Blick analysierte. Howards End und A Passage to India sind Meisterwerke des modernen Gesellschaftsromans.",
-    works: [
-      { title: "Zimmer mit Aussicht", year: 1908, read: true },
-      { title: "Howards End", year: 1910, read: false, tbr: 1 },
-      { title: "Auf der Suche nach Indien", year: 1924, read: false, tbr: 2 },
-      { title: "Maurice", year: 1971, read: false, tbr: 3 },
-    ]
-  },
-  {
-    id: 10, name: "Ian McEwan", years: "1948–", country: "England",
-    genres: ["Zeitgenössisch", "Psychologischer Roman"],
-    bio: "Einer der bedeutendsten britischen Gegenwartsautoren. Meister der moralischen Spannung, bekannt für präzise, kühle Prosa und verstörend genaue Psychologie.",
-    works: [
-      { title: "Abbitte", year: 2001, read: true },
-      { title: "Saturday", year: 2005, read: true },
-      { title: "Am Strand", year: 2007, read: false, tbr: 2 },
-      { title: "Solar", year: 2010, read: false, tbr: 3 },
-      { title: "Maschinen wie ich", year: 2019, read: false, tbr: 1 },
-    ]
-  },
-  {
-    id: 11, name: "Sadie Jones", years: "1967–", country: "England",
-    genres: ["Zeitgenössisch", "Gesellschaftsroman"],
-    bio: "Britische Romanautorin mit einem Gespür für Klassenunterschiede, Begehren und die Wunden der Nachkriegsgesellschaft. The Outcast ist ihr gefeiertes Debüt.",
-    works: [
-      { title: "The Outcast", year: 2008, read: false, tbr: 1 },
-      { title: "The Uninvited Guests", year: 2012, read: false, tbr: 2 },
-      { title: "Fallout", year: 2014, read: false, tbr: 3 },
-    ]
-  },
-  {
-    id: 12, name: "Anita Brookner", years: "1928–2016", country: "England",
-    genres: ["Zeitgenössisch", "Psychologischer Roman"],
-    bio: "Preisgekrönte britische Autorin und Kunsthistorikerin. Ihre Romane erkunden Einsamkeit, Scheitern und das leise Leiden gebildeter Frauen mit eleganter, zurückhaltender Prosa.",
-    works: [
-      { title: "Hotel du Lac", year: 1984, read: true },
-      { title: "Family and Friends", year: 1985, read: false, tbr: 2 },
-      { title: "A Misalliance", year: 1986, read: false, tbr: 3 },
-      { title: "Look at Me", year: 1983, read: false, tbr: 1 },
-    ]
-  },
-  {
-    id: 13, name: "Haruki Murakami", years: "1949–", country: "Japan",
-    genres: ["Magischer Realismus", "Postmodernismus"],
-    bio: "Japans meistgelesener Gegenwartsautor weltweit. Verbindet westliche Popkultur mit japanischer Melancholie, Traumlogik und existenzieller Einsamkeit zu einem unverwechselbaren Stil.",
-    works: [
-      { title: "Naokos Lächeln", year: 1987, read: true },
-      { title: "Kafka am Strand", year: 2002, read: true },
-      { title: "1Q84", year: 2009, read: false, tbr: 1 },
-      { title: "Die Pilgerjahre des farblosen Herrn Tazaki", year: 2013, read: false, tbr: 2 },
-      { title: "Mister Aufziehvogel", year: 1994, read: false, tbr: 3 },
-    ]
-  },
-  {
-    id: 14, name: "Kazuo Ishiguro", years: "1954–", country: "Japan / England",
-    genres: ["Zeitgenössisch", "Erinnerungsroman"],
-    bio: "Nobelpreisträger 2017, in Japan geboren und in England aufgewachsen. Meister der unzuverlässigen Erzählung und der stillen Melancholie. Seine Romane kreisen um Erinnerung, Verlust und Würde.",
-    works: [
-      { title: "Was vom Tage übrig blieb", year: 1989, read: true },
-      { title: "Alles, was wir geben mussten", year: 2005, read: true },
-      { title: "Der begrabene Riese", year: 2015, read: false, tbr: 1 },
-      { title: "Klara und die Sonne", year: 2021, read: false, tbr: 2 },
-    ]
-  },
-  {
-    id: 15, name: "Ernest Hemingway", years: "1899–1961", country: "USA",
-    genres: ["Modernismus", "Lost Generation"],
-    bio: "Ikone der amerikanischen Moderne. Sein 'Eisberg-Stil' — lakonisch, direkt, ohne Ornament — revolutionierte die Prosa des 20. Jahrhunderts. Nobelpreisträger 1954.",
-    works: [
-      { title: "Fiesta", year: 1926, read: true },
-      { title: "Wem die Stunde schlägt", year: 1940, read: true },
-      { title: "In einem anderen Land", year: 1929, read: false, tbr: 2 },
-      { title: "Der alte Mann und das Meer", year: 1952, read: true },
-      { title: "Paris — Ein Fest fürs Leben", year: 1964, read: false, tbr: 1 },
-    ]
-  },
-  {
-    id: 16, name: "John Irving", years: "1942–", country: "USA",
-    genres: ["Zeitgenössisch", "Gesellschaftsroman"],
-    bio: "Amerikanischer Erzähler mit einem Hang zu skurrilen Charakteren und melodramatischen Plots. Die Welt des Garp machte ihn weltberühmt; seine Romane verbinden Komik und Tragik.",
-    works: [
-      { title: "Die Welt des Garp", year: 1978, read: true },
-      { title: "Das Hotel New Hampshire", year: 1981, read: true },
-      { title: "Gottes Werk und Teufels Beitrag", year: 1985, read: false, tbr: 1 },
-      { title: "Zirkuskind", year: 1994, read: false, tbr: 2 },
-    ]
-  },
-  {
-    id: 17, name: "Louisa May Alcott", years: "1832–1888", country: "USA",
-    genres: ["Realismus", "Frauenliteratur"],
-    bio: "Amerikanische Schriftstellerin und Aktivistin. Little Women ist ein zeitloser Klassiker über Weiblichkeit, Ambitionen und Familienzusammenhalt im Amerika des Bürgerkriegs.",
-    works: [
-      { title: "Little Women", year: 1868, read: true },
-      { title: "Little Men", year: 1871, read: false, tbr: 3 },
-      { title: "Jo's Boys", year: 1886, read: false, tbr: 3 },
-    ]
-  },
-  {
-    id: 18, name: "Margaret Atwood", years: "1939–", country: "Kanada",
-    genres: ["Dystopie", "Feminismus", "Zeitgenössisch"],
-    bio: "Kanadische Ausnahmeautorin, Feministin und Literaturkritikerin. Der Report der Magd ist ein dystopisches Meisterwerk; ihr Werk spannt Genres und Jahrzehnte.",
-    works: [
-      { title: "Der Report der Magd", year: 1985, read: true },
-      { title: "Die Zeuginnen", year: 2019, read: false, tbr: 1 },
-      { title: "Der blinde Mörder", year: 2000, read: false, tbr: 2 },
-      { title: "Oryx und Crake", year: 2003, read: false, tbr: 3 },
-    ]
-  },
-  {
-    id: 19, name: "Javier Marías", years: "1951–2022", country: "Spanien",
-    genres: ["Zeitgenössisch", "Philosophischer Roman"],
-    bio: "Bedeutendster spanischer Romanautor seiner Generation. Seine langen, mäandernden Sätze erkunden Erinnerung, Geheimnisse und moralische Ambivalenz mit hypnotischer Wirkung.",
-    works: [
-      { title: "Mein Herz so weiß", year: 1992, read: true },
-      { title: "Morgen in der Schlacht denk an mich", year: 1994, read: false, tbr: 1 },
-      { title: "Dein Gesicht morgen (Trilogie)", year: 2002, read: false, tbr: 2 },
-      { title: "Berta Isla", year: 2017, read: false, tbr: 3 },
-    ]
-  },
-  {
-    id: 20, name: "Michel Houellebecq", years: "1956–", country: "Frankreich",
-    genres: ["Zeitgenössisch", "Sozialkritik"],
-    bio: "Frankreichs provokantester Gegenwartsautor. Seine nihilistischen Romane sezieren Konsumgesellschaft, Sexualität und westlichen Niedergang mit schonungsloser Kälte.",
-    works: [
-      { title: "Elementarteilchen", year: 1998, read: true },
-      { title: "Plattform", year: 2001, read: false, tbr: 2 },
-      { title: "Unterwerfung", year: 2015, read: false, tbr: 1 },
-      { title: "Serotonin", year: 2019, read: false, tbr: 3 },
-    ]
-  },
-  {
-    id: 21, name: "Anna Gavalda", years: "1970–", country: "Frankreich",
-    genres: ["Zeitgenössisch", "Gesellschaftsroman"],
-    bio: "Französische Bestseller-Autorin mit warmherzigem, zugänglichem Stil. Ensemble — Einfach zusammen ist ein Panorama menschlicher Verletzlichkeit und Verbundenheit.",
-    works: [
-      { title: "Ich wünsche mir, dass irgendwo jemand auf mich wartet", year: 2000, read: true },
-      { title: "Zusammen, allein", year: 2004, read: true },
-      { title: "Ensemble, c'est tout", year: 2004, read: false, tbr: 1 },
-      { title: "La Consolante", year: 2008, read: false, tbr: 2 },
-    ]
-  },
-  {
-    id: 22, name: "Pascal Mercier", years: "1944–", country: "Schweiz",
-    genres: ["Philosophischer Roman", "Zeitgenössisch"],
-    bio: "Pseudonym des Philosophieprofessors Peter Bieri. Nachtzug nach Lissabon ist ein meditatives Werk über Identität, Zeit und das gelebte Leben — ein Kultbuch für Leserinnen.",
-    works: [
-      { title: "Nachtzug nach Lissabon", year: 2004, read: true },
-      { title: "Perlmanns Schweigen", year: 1995, read: false, tbr: 1 },
-      { title: "Das Gewicht der Worte", year: 2020, read: false, tbr: 2 },
-    ]
-  },
+const DEFAULT_AUTHORS = [
+  {id:1,name:"Leo Tolstoi",years:"1828–1910",country:"Russland",genres:["Realismus","Epischer Roman"],bio:"Einer der bedeutendsten Schriftsteller der Weltliteratur. Romane, Novellen und moralphilosophische Schriften. Beeinflusste Generationen von Autoren und Denkern.",works:[{title:"Krieg und Frieden",year:1869,read:true},{title:"Anna Karenina",year:1878,read:true},{title:"Auferstehung",year:1899,read:false,tbr:2},{title:"Der Tod des Iwan Iljitsch",year:1886,read:false,tbr:1}]},
+  {id:2,name:"Fjodor Dostojewski",years:"1821–1881",country:"Russland",genres:["Realismus","Psychologischer Roman"],bio:"Meister des psychologischen Romans und Vorläufer des Existenzialismus. Seine Werke ergründen Schuld, Leiden und den freien Willen in einer dichten, fiebrigen Prosa.",works:[{title:"Schuld und Sühne",year:1866,read:true},{title:"Der Idiot",year:1869,read:true},{title:"Die Brüder Karamasow",year:1880,read:false,tbr:1},{title:"Dämonen",year:1872,read:false,tbr:2},{title:"Der Spieler",year:1867,read:false,tbr:3}]},
+  {id:3,name:"Charles Dickens",years:"1812–1870",country:"England",genres:["Viktorianismus","Sozialkritik"],bio:"Größter englischer Romancier des 19. Jahrhunderts. Sein Werk prangert Armut und soziale Ungerechtigkeit mit unvergleichlichem Humor und Pathos an.",works:[{title:"Oliver Twist",year:1839,read:true},{title:"David Copperfield",year:1850,read:true},{title:"Große Erwartungen",year:1861,read:true},{title:"Bleak House",year:1853,read:false,tbr:1},{title:"Dombey und Sohn",year:1848,read:false,tbr:3}]},
+  {id:4,name:"Jane Austen",years:"1775–1817",country:"England",genres:["Regency-Roman","Soziale Satire"],bio:"Meisterin des ironischen gesellschaftlichen Romans. Ihre Werke erkunden Heirat, Moral und weibliche Autonomie in der englischen Gentry mit trockenem Witz.",works:[{title:"Stolz und Vorurteil",year:1813,read:true},{title:"Sinn und Sinnlichkeit",year:1811,read:true},{title:"Emma",year:1815,read:true},{title:"Northanger Abbey",year:1817,read:false,tbr:2},{title:"Überredung",year:1817,read:false,tbr:1}]},
+  {id:5,name:"Charlotte Brontë",years:"1816–1855",country:"England",genres:["Viktorianismus","Gothischer Roman"],bio:"Die älteste der Brontë-Schwestern. Jane Eyre revolutionierte die Ich-Erzählung mit leidenschaftlicher Innerlichkeit.",works:[{title:"Jane Eyre",year:1847,read:true},{title:"Shirley",year:1849,read:false,tbr:2},{title:"Villette",year:1853,read:false,tbr:1}]},
+  {id:6,name:"Emily Brontë",years:"1818–1848",country:"England",genres:["Viktorianismus","Gothischer Roman"],bio:"Schrieb mit Sturmhöhe einen der intensivsten Liebesromane der englischen Literatur — ihr einziger Roman, ein Jahrhundertwerk.",works:[{title:"Sturmhöhe",year:1847,read:true}]},
+  {id:7,name:"Anne Brontë",years:"1820–1849",country:"England",genres:["Viktorianismus","Sozialkritik"],bio:"Die jüngste Brontë-Schwester. Die Herrin von Wildfell Hall ist ein frühes feministisches Werk über häusliche Gewalt und weibliche Unabhängigkeit.",works:[{title:"Agnes Grey",year:1847,read:false,tbr:2},{title:"Die Herrin von Wildfell Hall",year:1848,read:false,tbr:1}]},
+  {id:8,name:"George Eliot",years:"1819–1880",country:"England",genres:["Realismus","Psychologischer Roman"],bio:"Pseudonym von Mary Ann Evans. Middlemarch gilt als einer der größten englischen Romane — psychologische Tiefe trifft soziale Analyse.",works:[{title:"Middlemarch",year:1872,read:false,tbr:1},{title:"Die Mühle am Floss",year:1860,read:false,tbr:2},{title:"Silas Marner",year:1861,read:false,tbr:3}]},
+  {id:9,name:"E. M. Forster",years:"1879–1970",country:"England",genres:["Modernismus","Gesellschaftsroman"],bio:"Englischer Romancier, der soziale Klasse und persönliche Beziehungen mit feinem Gespür für Konventionen analysierte.",works:[{title:"Zimmer mit Aussicht",year:1908,read:true},{title:"Howards End",year:1910,read:false,tbr:1},{title:"Auf der Suche nach Indien",year:1924,read:false,tbr:2},{title:"Maurice",year:1971,read:false,tbr:3}]},
+  {id:10,name:"Ian McEwan",years:"1948–",country:"England",genres:["Zeitgenössisch","Psychologischer Roman"],bio:"Einer der bedeutendsten britischen Gegenwartsautoren. Meister der moralischen Spannung mit präziser, kühler Prosa.",works:[{title:"Abbitte",year:2001,read:true},{title:"Saturday",year:2005,read:true},{title:"Am Strand",year:2007,read:false,tbr:2},{title:"Maschinen wie ich",year:2019,read:false,tbr:1}]},
+  {id:11,name:"Sadie Jones",years:"1967–",country:"England",genres:["Zeitgenössisch","Gesellschaftsroman"],bio:"Britische Autorin mit einem Gespür für Klassenunterschiede und die Wunden der Nachkriegsgesellschaft.",works:[{title:"The Outcast",year:2008,read:false,tbr:1},{title:"The Uninvited Guests",year:2012,read:false,tbr:2},{title:"Fallout",year:2014,read:false,tbr:3}]},
+  {id:12,name:"Anita Brookner",years:"1928–2016",country:"England",genres:["Zeitgenössisch","Psychologischer Roman"],bio:"Preisgekrönte britische Autorin. Elegante, zurückhaltende Prosa über Einsamkeit und leises Scheitern.",works:[{title:"Hotel du Lac",year:1984,read:true},{title:"Look at Me",year:1983,read:false,tbr:1},{title:"Family and Friends",year:1985,read:false,tbr:2}]},
+  {id:13,name:"Haruki Murakami",years:"1949–",country:"Japan",genres:["Magischer Realismus","Postmodernismus"],bio:"Japans meistgelesener Gegenwartsautor weltweit. Verbindet westliche Popkultur mit japanischer Melancholie und Traumlogik.",works:[{title:"Naokos Lächeln",year:1987,read:true},{title:"Kafka am Strand",year:2002,read:true},{title:"1Q84",year:2009,read:false,tbr:1},{title:"Die Pilgerjahre des farblosen Herrn Tazaki",year:2013,read:false,tbr:2},{title:"Mister Aufziehvogel",year:1994,read:false,tbr:3}]},
+  {id:14,name:"Kazuo Ishiguro",years:"1954–",country:"Japan / England",genres:["Zeitgenössisch","Erinnerungsroman"],bio:"Nobelpreisträger 2017. Meister der unzuverlässigen Erzählung und stillen Melancholie — Erinnerung, Verlust, Würde.",works:[{title:"Was vom Tage übrig blieb",year:1989,read:true},{title:"Alles, was wir geben mussten",year:2005,read:true},{title:"Der begrabene Riese",year:2015,read:false,tbr:1},{title:"Klara und die Sonne",year:2021,read:false,tbr:2}]},
+  {id:15,name:"Ernest Hemingway",years:"1899–1961",country:"USA",genres:["Modernismus","Lost Generation"],bio:"Ikone der amerikanischen Moderne. Sein Eisberg-Stil revolutionierte die Prosa des 20. Jahrhunderts. Nobelpreisträger 1954.",works:[{title:"Fiesta",year:1926,read:true},{title:"Wem die Stunde schlägt",year:1940,read:true},{title:"In einem anderen Land",year:1929,read:false,tbr:2},{title:"Der alte Mann und das Meer",year:1952,read:true},{title:"Paris — Ein Fest fürs Leben",year:1964,read:false,tbr:1}]},
+  {id:16,name:"John Irving",years:"1942–",country:"USA",genres:["Zeitgenössisch","Gesellschaftsroman"],bio:"Amerikanischer Erzähler mit skurrilen Charakteren und melodramatischen Plots. Die Welt des Garp machte ihn weltberühmt.",works:[{title:"Die Welt des Garp",year:1978,read:true},{title:"Das Hotel New Hampshire",year:1981,read:true},{title:"Gottes Werk und Teufels Beitrag",year:1985,read:false,tbr:1},{title:"Zirkuskind",year:1994,read:false,tbr:2}]},
+  {id:17,name:"Louisa May Alcott",years:"1832–1888",country:"USA",genres:["Realismus","Frauenliteratur"],bio:"Amerikanische Schriftstellerin und Aktivistin. Little Women ist ein zeitloser Klassiker über Weiblichkeit und Familie.",works:[{title:"Little Women",year:1868,read:true},{title:"Little Men",year:1871,read:false,tbr:3},{title:"Jo's Boys",year:1886,read:false,tbr:3}]},
+  {id:18,name:"Margaret Atwood",years:"1939–",country:"Kanada",genres:["Dystopie","Feminismus","Zeitgenössisch"],bio:"Kanadische Ausnahmeautorin. Der Report der Magd ist ein dystopisches Meisterwerk; ihr Werk spannt Genres und Jahrzehnte.",works:[{title:"Der Report der Magd",year:1985,read:true},{title:"Die Zeuginnen",year:2019,read:false,tbr:1},{title:"Der blinde Mörder",year:2000,read:false,tbr:2},{title:"Oryx und Crake",year:2003,read:false,tbr:3}]},
+  {id:19,name:"Javier Marías",years:"1951–2022",country:"Spanien",genres:["Zeitgenössisch","Philosophischer Roman"],bio:"Bedeutendster spanischer Romanautor seiner Generation. Lange, mäandernde Sätze erkunden Erinnerung und moralische Ambivalenz.",works:[{title:"Mein Herz so weiß",year:1992,read:true},{title:"Morgen in der Schlacht denk an mich",year:1994,read:false,tbr:1},{title:"Dein Gesicht morgen (Trilogie)",year:2002,read:false,tbr:2},{title:"Berta Isla",year:2017,read:false,tbr:3}]},
+  {id:20,name:"Michel Houellebecq",years:"1956–",country:"Frankreich",genres:["Zeitgenössisch","Sozialkritik"],bio:"Frankreichs provokantester Gegenwartsautor. Nihilistische Romane sezieren Konsumgesellschaft und westlichen Niedergang.",works:[{title:"Elementarteilchen",year:1998,read:true},{title:"Plattform",year:2001,read:false,tbr:2},{title:"Unterwerfung",year:2015,read:false,tbr:1},{title:"Serotonin",year:2019,read:false,tbr:3}]},
+  {id:21,name:"Anna Gavalda",years:"1970–",country:"Frankreich",genres:["Zeitgenössisch","Gesellschaftsroman"],bio:"Französische Bestseller-Autorin mit warmherzigem Stil. Panorama menschlicher Verletzlichkeit und Verbundenheit.",works:[{title:"Ich wünsche mir, dass irgendwo jemand auf mich wartet",year:2000,read:true},{title:"Zusammen, allein",year:2004,read:true},{title:"La Consolante",year:2008,read:false,tbr:1}]},
+  {id:22,name:"Victor Hugo",years:"1802–1885",country:"Frankreich",genres:["Romantik","Sozialer Roman"],bio:"Gigant der französischen Literatur. Dichter, Dramatiker und Romancier, dessen Werke soziales Mitgefühl, politische Leidenschaft und epische Wucht vereinen.",works:[{title:"Die Elenden",year:1862,read:false,tbr:1},{title:"Der Glöckner von Notre-Dame",year:1831,read:false,tbr:2},{title:"Der Mann, der lacht",year:1869,read:false,tbr:3}]},
+  {id:23,name:"Honoré de Balzac",years:"1799–1850",country:"Frankreich",genres:["Realismus","Gesellschaftsroman"],bio:"Schöpfer der Comédie humaine — über 90 Romane und Erzählungen, die die französische Gesellschaft seiner Zeit schonungslos porträtieren.",works:[{title:"Vater Goriot",year:1835,read:false,tbr:1},{title:"Eugénie Grandet",year:1833,read:false,tbr:2},{title:"Verlorene Illusionen",year:1843,read:false,tbr:2},{title:"Die Lilie im Tal",year:1836,read:false,tbr:3}]},
+  {id:24,name:"Pascal Mercier",years:"1944–",country:"Schweiz",genres:["Philosophischer Roman","Zeitgenössisch"],bio:"Pseudonym des Philosophieprofessors Peter Bieri. Nachtzug nach Lissabon ist ein meditatives Werk über Identität, Zeit und das gelebte Leben.",works:[{title:"Nachtzug nach Lissabon",year:2004,read:true},{title:"Perlmanns Schweigen",year:1995,read:false,tbr:1},{title:"Das Gewicht der Worte",year:2020,read:false,tbr:2}]},
+  {id:25,name:"Isabel Allende",years:"1942–",country:"Chile",genres:["Magischer Realismus","Historischer Roman"],bio:"Bedeutendste lateinamerikanische Schriftstellerin der Gegenwart. Ihre Romane verweben Familiengeschichten, Geschichte und Magie zu einem unverwechselbaren Erzählkosmos.",works:[{title:"Das Geisterhaus",year:1982,read:false,tbr:1},{title:"Eva Luna",year:1987,read:false,tbr:2},{title:"Von Liebe und Schatten",year:1984,read:false,tbr:2},{title:"Paula",year:1994,read:false,tbr:3},{title:"Die Stadt der wilden Götter",year:2002,read:false,tbr:3}]},
+  {id:26,name:"Thomas Mann",years:"1875–1955",country:"Deutschland",genres:["Modernismus","Bildungsroman"],bio:"Bedeutendster deutschsprachiger Autor des 20. Jahrhunderts. Nobelpreisträger 1929. Sein Werk verbindet bürgerliche Dekadenz und Verfall mit ironischer Distanz und philosophischer Tiefe.",works:[{title:"Buddenbrooks",year:1901,read:false,tbr:1},{title:"Der Zauberberg",year:1924,read:false,tbr:1},{title:"Tod in Venedig",year:1912,read:false,tbr:2},{title:"Doktor Faustus",year:1947,read:false,tbr:3},{title:"Bekenntnisse des Hochstaplers Felix Krull",year:1954,read:false,tbr:3}]},
+  {id:27,name:"Stefan Zweig",years:"1881–1942",country:"Österreich",genres:["Modernismus","Novelle","Biografie"],bio:"Meister der psychologischen Novelle und glänzender Biograf. Sein eleganter, präziser Stil und sein Gespür für seelische Zustände machen ihn zu einem der meistgelesenen deutschsprachigen Autoren weltweit.",works:[{title:"Schachnovelle",year:1942,read:false,tbr:1},{title:"Brief einer Unbekannten",year:1922,read:false,tbr:1},{title:"Die Welt von Gestern",year:1942,read:false,tbr:2},{title:"Ungeduld des Herzens",year:1939,read:false,tbr:2},{title:"Maria Stuart",year:1935,read:false,tbr:3}]},
+  {id:28,name:"Alexandre Dumas",years:"1802–1870",country:"Frankreich",genres:["Romantik","Abenteuerroman","Historischer Roman"],bio:"Meister des Abenteuerromans und Schöpfer unvergesslicher Helden. Seine packenden Erzählungen um Mut, Verrat und Gerechtigkeit gehören zum Kanon der Weltliteratur.",works:[{title:"Die drei Musketiere",year:1844,read:false,tbr:1},{title:"Der Graf von Monte Christo",year:1844,read:false,tbr:1},{title:"Zwanzig Jahre danach",year:1845,read:false,tbr:3},{title:"Der Vicomte von Bragelonne",year:1847,read:false,tbr:3}]},
 ];
 
-let nextId = 23;
+const COUNTRY_ORDER = ['Russland','England','Japan','Japan / England','USA','Kanada','Chile','Spanien','Frankreich','Deutschland','Österreich','Schweiz'];
+const FLAGS = {'Russland':'🇷🇺','England':'🇬🇧','Japan':'🇯🇵','Japan / England':'🇯🇵🇬🇧','USA':'🇺🇸','Kanada':'🇨🇦','Chile':'🇨🇱','Spanien':'🇪🇸','Frankreich':'🇫🇷','Deutschland':'🇩🇪','Österreich':'🇦🇹','Schweiz':'🇨🇭'};
+const AV_COLORS = [{bg:'#EEEDFE',c:'#3C3489'},{bg:'#E1F5EE',c:'#085041'},{bg:'#FAECE7',c:'#712B13'},{bg:'#E6F1FB',c:'#0C447C'},{bg:'#FBEAF0',c:'#72243E'},{bg:'#EAF3DE',c:'#27500A'},{bg:'#FAEEDA',c:'#633806'}];
+const STORAGE_KEY = 'meine-literatur-v1';
+
+let authors = loadAuthors();
+let nextId   = Math.max(...authors.map(a=>a.id)) + 1;
 let activeFilter = 'all';
 let editMode = false;
 let editingId = null;
+let openCountries = {};
+let openTbrPrios  = {};
+let workRowCount  = 0;
+let tbrOrder = loadTbrOrder(); // {prio: [{authorId, workTitle}, ...]}
 
-// Avatar colors cycling
-const avColors = [
-  { bg:'#EEEDFE', color:'#3C3489' },
-  { bg:'#E1F5EE', color:'#085041' },
-  { bg:'#FAECE7', color:'#712B13' },
-  { bg:'#E6F1FB', color:'#0C447C' },
-  { bg:'#FBEAF0', color:'#72243E' },
-  { bg:'#EAF3DE', color:'#27500A' },
-  { bg:'#FAEEDA', color:'#633806' },
-];
-
-function avStyle(id) {
-  const c = avColors[id % avColors.length];
-  return `background:${c.bg};color:${c.color}`;
+function loadTbrOrder() {
+  try { const r=localStorage.getItem(STORAGE_KEY+'-tbrorder'); if(r) return JSON.parse(r); } catch(e) {}
+  return {1:[],2:[],3:[]};
+}
+function saveTbrOrder() {
+  try { localStorage.setItem(STORAGE_KEY+'-tbrorder', JSON.stringify(tbrOrder)); } catch(e) {}
 }
 
-function initials(name) {
-  const p = name.split(' ');
-  if (p.length >= 2) return (p[0][0] + p[p.length-1][0]).toUpperCase();
-  return name.slice(0,2).toUpperCase();
+// Returns ordered TBR items for a given prio, respecting tbrOrder
+function getOrderedTbr(prio) {
+  const all=[];
+  authors.forEach(a=>a.works.filter(w=>!w.read&&w.tbr===prio).forEach(w=>all.push({authorId:a.id,authorName:a.name,title:w.title,year:w.year})));
+  const order=tbrOrder[prio]||[];
+  // Items that exist in saved order first, then new items appended at end
+  const ordered=[];
+  order.forEach(o=>{
+    const found=all.find(x=>x.authorId===o.authorId&&x.title===o.title);
+    if(found) ordered.push(found);
+  });
+  all.forEach(x=>{ if(!ordered.find(o=>o.authorId===x.authorId&&o.title===x.title)) ordered.push(x); });
+  return ordered;
+}
+function moveTbrItem(prio, idx, dir) {
+  const items=getOrderedTbr(prio);
+  const newIdx=idx+dir;
+  if(newIdx<0||newIdx>=items.length) return;
+  [items[idx],items[newIdx]]=[items[newIdx],items[idx]];
+  tbrOrder[prio]=items.map(x=>({authorId:x.authorId,title:x.title}));
+  saveTbrOrder();
+  saveAuthors();
+  render();
 }
 
-function setFilter(f, btn) {
-  activeFilter = f;
-  document.querySelectorAll('.btn[id^="f-"]').forEach(b => b.classList.remove('active'));
+function loadAuthors() {
+  try { const r = localStorage.getItem(STORAGE_KEY); if (r) return JSON.parse(r); } catch(e) {}
+  return JSON.parse(JSON.stringify(DEFAULT_AUTHORS));
+}
+function saveAuthors() {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(authors));
+    const ind = document.getElementById('save-indicator');
+    ind.classList.add('show');
+    clearTimeout(ind._t);
+    ind._t = setTimeout(()=>ind.classList.remove('show'), 2500);
+  } catch(e) {}
+}
+
+function exportHTML() {
+  const src = document.documentElement.outerHTML;
+  const marker = 'const DEFAULT_AUTHORS = [';
+  const start  = src.indexOf(marker);
+  const end    = src.indexOf('\n];', start) + 3;
+  if (start === -1) { alert('Export-Fehler.'); return; }
+  const newData = 'const DEFAULT_AUTHORS = ' + JSON.stringify(authors, null, 2) + ';';
+  const updated = src.slice(0, start) + newData + src.slice(end);
+  const blob = new Blob([updated], {type:'text/html;charset=utf-8'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'meine-literatur.html';
+  a.click();
+  URL.revokeObjectURL(a.href);
+}
+
+function avStyle(id) { const c=AV_COLORS[id%AV_COLORS.length]; return `background:${c.bg};color:${c.c}`; }
+function initials(name) { const p=name.split(' '); return p.length>=2?(p[0][0]+p[p.length-1][0]).toUpperCase():name.slice(0,2).toUpperCase(); }
+
+function setFilter(f,btn) {
+  activeFilter=f;
+  document.querySelectorAll('.btn[id^="f-"]').forEach(b=>b.classList.remove('active'));
   btn.classList.add('active');
   render();
 }
-
 function toggleEdit() {
-  editMode = !editMode;
-  const btn = document.getElementById('edit-toggle');
-  btn.textContent = editMode ? 'Fertig' : 'Bearbeiten';
-  btn.classList.toggle('on', editMode);
-  document.getElementById('main').classList.toggle('edit-mode', editMode);
+  editMode=!editMode;
+  const btn=document.getElementById('edit-toggle');
+  btn.textContent=editMode?'Fertig':'Bearbeiten';
+  btn.classList.toggle('on',editMode);
+  document.getElementById('main').classList.toggle('edit-mode',editMode);
   render();
 }
-
-// Group by country
-function groupByCountry(list) {
-  const map = {};
-  list.forEach(a => {
-    if (!map[a.country]) map[a.country] = [];
-    map[a.country].push(a);
-  });
-  return map;
+function toggleCountry(country) {
+  openCountries[country]=!openCountries[country];
+  const safe=country.replace(/\s/g,'_').replace(/\//g,'_');
+  const body=document.getElementById('cb-'+safe);
+  const head=document.getElementById('ch-'+safe);
+  if(body) body.classList.toggle('open',!!openCountries[country]);
+  if(head) head.classList.toggle('open',!!openCountries[country]);
+}
+function toggleTbrPrio(prio) {
+  openTbrPrios[prio]=!openTbrPrios[prio];
+  document.getElementById('tbr-body-'+prio)?.classList.toggle('open',!!openTbrPrios[prio]);
+  document.getElementById('tbr-head-'+prio)?.classList.toggle('open',!!openTbrPrios[prio]);
+}
+function toggleCard(id) {
+  const body=document.getElementById('body-'+id);
+  const exp=document.getElementById('exp-'+id);
+  const open=body.classList.toggle('open');
+  exp.style.transform=open?'rotate(90deg)':'';
 }
 
-const countryOrder = [
-  'Russland','England','Japan','Japan / England','USA','Kanada','Spanien','Frankreich','Schweiz'
-];
-
-const flags = {
-  'Russland': '🇷🇺',
-  'England': '🇬🇧',
-  'Japan': '🇯🇵',
-  'Japan / England': '🇯🇵🇬🇧',
-  'USA': '🇺🇸',
-  'Kanada': '🇨🇦',
-  'Spanien': '🇪🇸',
-  'Frankreich': '🇫🇷',
-  'Schweiz': '🇨🇭',
-};
-
+function onSearch() {
+  const q = document.getElementById('search').value;
+  // When search is cleared, close all country sections
+  if (q.length === 0) openCountries = {};
+  render();
+}
 function render() {
-  const q = document.getElementById('search').value.toLowerCase();
-  let list = authors.filter(a => {
-    const match = a.name.toLowerCase().includes(q)
-      || a.genres.some(g => g.toLowerCase().includes(q))
-      || a.country.toLowerCase().includes(q);
-    if (!match) return false;
-    if (activeFilter === 'tbr') return a.works.some(w => !w.read && w.tbr);
-    if (activeFilter === 'gelesen') return a.works.some(w => w.read);
+  const q=document.getElementById('search').value.toLowerCase();
+  const isSearching = q.length > 0;
+  const list=authors.filter(a=>{
+    const m=a.name.toLowerCase().includes(q)||a.genres.some(g=>g.toLowerCase().includes(q))||a.country.toLowerCase().includes(q);
+    if(!m) return false;
+    if(activeFilter==='tbr')    return a.works.some(w=>!w.read&&w.tbr);
+    if(activeFilter==='gelesen') return a.works.some(w=>w.read);
     return true;
   });
 
-  // Stats
-  const totalRead = authors.reduce((s,a) => s + a.works.filter(w=>w.read).length, 0);
-  const totalTbr  = authors.reduce((s,a) => s + a.works.filter(w=>!w.read&&w.tbr).length, 0);
-  document.getElementById('stats-bar').innerHTML =
-    `<span><strong>${authors.length}</strong> Schriftsteller</span>` +
-    `<span><strong>${authors.reduce((s,a)=>s+a.works.length,0)}</strong> Werke gesamt</span>` +
-    `<span><strong>${totalRead}</strong> gelesen</span>` +
-    `<span><strong>${totalTbr}</strong> auf der TBR-Liste</span>`;
-
-  const grouped = groupByCountry(list);
-  const allCountries = [...new Set([...countryOrder, ...Object.keys(grouped)])].filter(c => grouped[c]);
-
-  let html = '';
-
-  if (editMode) {
-    html += `<div class="add-author-bar" style="display:block;margin-bottom:1.5rem">
-      <button class="btn" style="border-color:var(--accent);color:var(--accent)" onclick="openModal(null)">+ Neuen Schriftsteller hinzufügen</button>
-    </div>`;
+  // Auto-open countries that have search hits; restore closed state when search cleared
+  if (isSearching) {
+    const hitCountries = new Set(list.map(a=>a.country));
+    hitCountries.forEach(c=>{ openCountries[c]=true; });
   }
 
-  if (allCountries.length === 0) {
-    html += `<div class="empty">Keine Einträge gefunden.</div>`;
-  }
+  const totalRead=authors.reduce((s,a)=>s+a.works.filter(w=>w.read).length,0);
+  const totalTbr=authors.reduce((s,a)=>s+a.works.filter(w=>!w.read&&w.tbr).length,0);
+  const totalW=authors.reduce((s,a)=>s+a.works.length,0);
+  document.getElementById('stat-text').innerHTML=
+    `<strong>${authors.length}</strong> Schriftsteller &ensp;<strong>${totalW}</strong> Werke &ensp;<strong>${totalRead}</strong> gelesen &ensp;<strong>${totalTbr}</strong> TBR`;
 
-  allCountries.forEach(country => {
-    const group = grouped[country];
-    html += `<div class="country-section">
-      <div class="country-heading">
-        <span class="country-flag">${flags[country] || '🌍'}</span>
+  const grouped={};
+  list.forEach(a=>{ if(!grouped[a.country]) grouped[a.country]=[]; grouped[a.country].push(a); });
+  const allCountries=[...new Set([...COUNTRY_ORDER,...Object.keys(grouped)])].filter(c=>grouped[c]);
+
+  let html='';
+  allCountries.forEach(country=>{
+    const group=grouped[country];
+    const isOpen=!!openCountries[country];
+    const safe=country.replace(/\s/g,'_').replace(/\//g,'_');
+    html+=`<div class="country-section">
+      <div class="country-heading${isOpen?' open':''}" id="ch-${safe}" onclick="toggleCountry('${country.replace(/'/g,"\\'").replace(/\//g,"\\/")}')">
+        <span class="country-flag">${FLAGS[country]||'🌍'}</span>
         <span class="country-name">${country}</span>
         <span class="country-count">${group.length} Autor${group.length!==1?'en':''}</span>
+        <span class="country-chevron">›</span>
       </div>
-      <div class="author-grid">`;
+      <div class="country-body${isOpen?' open':''}" id="cb-${safe}">
+        <div class="author-grid">`;
 
-    group.forEach(a => {
-      const read = a.works.filter(w=>w.read).length;
-      const tbr  = a.works.filter(w=>!w.read&&w.tbr);
-      const minP = tbr.length ? Math.min(...tbr.map(t=>t.tbr)) : null;
-
-      html += `<div class="author-card" id="card-${a.id}">
-        <div class="card-head" onclick="toggleCard(${a.id})">
-          <div class="avatar" style="${avStyle(a.id)}">${initials(a.name)}</div>
-          <div class="card-meta">
-            <h3>${a.name}</h3>
-            <div class="years">${a.years} · ${a.country}</div>
-            <div class="tag-row">
-              ${a.genres.map(g=>`<span class="tag tag-genre">${g}</span>`).join('')}
-              <span class="tag tag-read">${read} gelesen</span>
-              ${tbr.length ? `<span class="tag tag-tbr">${tbr.length} TBR</span>` : ''}
-              ${minP===1 ? `<span class="tag tag-prio1">Prio 1 offen</span>` : ''}
+    group.forEach(a=>{
+      const read=a.works.filter(w=>w.read).length;
+      const tbr=a.works.filter(w=>!w.read&&w.tbr);
+      const minP=tbr.length?Math.min(...tbr.map(t=>t.tbr)):null;
+      html+=`<div class="author-card" id="card-${a.id}">
+          <div class="card-head" onclick="toggleCard(${a.id})">
+            <div class="avatar" style="${avStyle(a.id)}">${initials(a.name)}</div>
+            <div class="card-meta">
+              <h3>${a.name}</h3>
+              <div class="years">${a.years} · ${a.country}</div>
+              <div class="tag-row">
+                ${a.genres.map(g=>`<span class="tag tag-genre">${g}</span>`).join('')}
+                <span class="tag tag-read">${read} gelesen</span>
+                ${tbr.length?`<span class="tag tag-tbr">${tbr.length} TBR</span>`:''}
+                ${minP===1?`<span class="tag tag-prio1">Prio 1 offen</span>`:''}
+              </div>
             </div>
+            <span class="expand-btn" id="exp-${a.id}">›</span>
           </div>
-          <span class="expand-btn" id="exp-${a.id}">›</span>
-        </div>
-        <div class="card-body" id="body-${a.id}">
-          <p class="bio-text">${a.bio}</p>
-          <div class="mini-stats">
-            <div class="mini-stat"><div class="n">${a.works.length}</div><div class="l">Werke</div></div>
-            <div class="mini-stat"><div class="n">${read}</div><div class="l">Gelesen</div></div>
-            <div class="mini-stat"><div class="n">${tbr.length}</div><div class="l">TBR</div></div>
-          </div>
-          <div class="works-label">Hauptwerke</div>
-          ${a.works.map(w => `
-            <div class="work-row">
-              <div class="dot ${w.read?'dot-read':'dot-unread'}" title="${w.read?'Gelesen':'Nicht gelesen'}"></div>
+          <div class="card-body" id="body-${a.id}">
+            <p class="bio-text">${a.bio}</p>
+            <div class="mini-stats">
+              <div class="mini-stat"><div class="n">${a.works.length}</div><div class="l">Werke</div></div>
+              <div class="mini-stat"><div class="n">${read}</div><div class="l">Gelesen</div></div>
+              <div class="mini-stat"><div class="n">${tbr.length}</div><div class="l">TBR</div></div>
+            </div>
+            <div class="works-label">Hauptwerke</div>
+            ${a.works.map(w=>`<div class="work-row">
+              <div class="dot ${w.read?'dot-read':'dot-unread'}"></div>
               <div class="work-title">${w.title}</div>
               <div class="work-year">${w.year}</div>
-              ${w.tbr ? `<span class="prio-badge p${w.tbr}">Prio ${w.tbr}</span>` : ''}
-              ${w.read ? `<span class="read-check">✓</span>` : ''}
-            </div>
-          `).join('')}
+              ${w.tbr?`<span class="prio-badge p${w.tbr}">Prio ${w.tbr}</span>`:''}
+              ${w.read?`<span class="read-check">✓</span>`:''}
+            </div>`).join('')}
+          </div>
+          <div class="edit-actions">
+            <button class="edit-btn" onclick="openModal(${a.id})">Bearbeiten</button>
+            <button class="edit-btn del" onclick="deleteAuthor(${a.id})">Löschen</button>
+          </div>
+        </div>`;
+    });
+    html+=`</div></div></div>`;
+  });
+
+  // TBR by prio — sortable
+  const hasTbr = authors.some(a=>a.works.some(w=>!w.read&&w.tbr));
+  if(hasTbr && activeFilter!=='gelesen'){
+    const prioLabels={1:'Höchste Priorität',2:'Mittlere Priorität',3:'Niedrige Priorität'};
+    html+=`<div class="tbr-section"><h2>To-be-read — Gesamtliste</h2>`;
+    [1,2,3].forEach(prio=>{
+      const items=getOrderedTbr(prio);
+      if(!items.length) return;
+      const isOpen=!!openTbrPrios[prio];
+      html+=`<div class="tbr-prio-group">
+        <div class="tbr-prio-head${isOpen?' open':''}" id="tbr-head-${prio}" onclick="toggleTbrPrio(${prio})">
+          <span class="prio-badge p${prio}">Prio ${prio}</span>
+          <span class="tbr-prio-title">${prioLabels[prio]}</span>
+          <span class="tbr-prio-count">${items.length} Buch${items.length!==1?'er':''}</span>
+          <span class="tbr-prio-chevron">›</span>
         </div>
-        <div class="edit-actions">
-          <button class="edit-btn" onclick="openModal(${a.id})">Bearbeiten</button>
-          <button class="edit-btn del" onclick="deleteAuthor(${a.id})">Löschen</button>
+        <div class="tbr-prio-body${isOpen?' open':''}" id="tbr-body-${prio}">
+          ${items.map((b,i)=>`
+          <div class="tbr-row">
+            <div class="tbr-num">${i+1}</div>
+            <div class="tbr-move">
+              <button class="tbr-arrow" onclick="moveTbrItem(${prio},${i},-1)" ${i===0?'disabled':''} title="Nach oben">▲</button>
+              <button class="tbr-arrow" onclick="moveTbrItem(${prio},${i},1)" ${i===items.length-1?'disabled':''} title="Nach unten">▼</button>
+            </div>
+            <div class="tbr-title">${b.title}</div>
+            <div class="tbr-author">— ${b.authorName}</div>
+          </div>`).join('')}
         </div>
       </div>`;
     });
-
-    html += `</div></div>`;
-  });
-
-  // TBR global list
-  const allTbr = [];
-  authors.forEach(a => a.works.filter(w=>!w.read&&w.tbr).forEach(w => allTbr.push({...w, author: a.name})));
-  allTbr.sort((a,b) => a.tbr - b.tbr);
-
-  if (allTbr.length && activeFilter !== 'gelesen') {
-    html += `<div class="tbr-section">
-      <h2>To-be-read — Gesamtliste</h2>
-      <div class="tbr-list">
-        ${allTbr.map((b,i) => `
-          <div class="tbr-row">
-            <div class="tbr-num">${i+1}</div>
-            <span class="prio-badge p${b.tbr}">Prio ${b.tbr}</span>
-            <div class="tbr-title">${b.title}</div>
-            <div class="tbr-author">— ${b.author}</div>
-          </div>
-        `).join('')}
-      </div>
-    </div>`;
+    html+=`</div>`;
   }
-
-  document.getElementById('content').innerHTML = html;
-}
-
-function toggleCard(id) {
-  const body = document.getElementById('body-' + id);
-  const exp  = document.getElementById('exp-' + id);
-  const open = body.classList.toggle('open');
-  exp.style.transform = open ? 'rotate(90deg)' : '';
+  document.getElementById('content').innerHTML=html;
 }
 
 function deleteAuthor(id) {
-  if (!confirm('Schriftsteller wirklich löschen?')) return;
-  authors = authors.filter(a => a.id !== id);
-  render();
+  if(!confirm('Schriftsteller wirklich löschen?')) return;
+  authors=authors.filter(a=>a.id!==id);
+  saveAuthors(); render();
 }
-
-// ── Modal ──
 function openModal(id) {
-  editingId = id;
-  const m = id ? authors.find(a => a.id === id) : null;
-  document.getElementById('modal-title').textContent = id ? 'Schriftsteller bearbeiten' : 'Neuen Schriftsteller hinzufügen';
-  document.getElementById('m-name').value   = m ? m.name : '';
-  document.getElementById('m-years').value  = m ? m.years : '';
-  document.getElementById('m-country').value = m ? m.country : '';
-  document.getElementById('m-genres').value = m ? m.genres.join(', ') : '';
-  document.getElementById('m-bio').value    = m ? m.bio : '';
-  const editor = document.getElementById('works-editor');
-  editor.innerHTML = '';
-  if (m) {
-    m.works.forEach(w => addWorkRow(w));
-  } else {
-    addWorkRow();
-  }
+  editingId=id;
+  const m=id?authors.find(a=>a.id===id):null;
+  document.getElementById('modal-title').textContent=id?'Schriftsteller bearbeiten':'Neuen Schriftsteller hinzufügen';
+  document.getElementById('m-name').value=m?m.name:'';
+  document.getElementById('m-years').value=m?m.years:'';
+  document.getElementById('m-country').value=m?m.country:'';
+  document.getElementById('m-genres').value=m?m.genres.join(', '):'';
+  document.getElementById('m-bio').value=m?m.bio:'';
+  document.getElementById('works-editor').innerHTML='';
+  workRowCount=0;
+  if(m) m.works.forEach(w=>addWorkRow(w)); else addWorkRow();
   document.getElementById('modal-bg').classList.add('open');
 }
-
-function closeModal() {
-  document.getElementById('modal-bg').classList.remove('open');
-  editingId = null;
-}
-
-let workRowCount = 0;
+function closeModal() { document.getElementById('modal-bg').classList.remove('open'); editingId=null; }
 function addWorkRow(w) {
-  const id = workRowCount++;
-  const row = document.createElement('div');
-  row.className = 'work-edit-row';
-  row.innerHTML = `
-    <input type="text" id="wt-${id}" placeholder="Titel" value="${w ? w.title : ''}">
-    <input type="number" id="wy-${id}" placeholder="Jahr" value="${w ? w.year : ''}" min="1000" max="2099">
-    <select id="wr-${id}">
-      <option value="no" ${w&&!w.read?'selected':''}>Nicht gelesen</option>
-      <option value="yes" ${w&&w.read?'selected':''}>Gelesen</option>
-    </select>
-    <select id="wp-${id}">
-      <option value="" ${!w||!w.tbr?'selected':''}>—</option>
-      <option value="1" ${w&&w.tbr==1?'selected':''}>Prio 1</option>
-      <option value="2" ${w&&w.tbr==2?'selected':''}>Prio 2</option>
-      <option value="3" ${w&&w.tbr==3?'selected':''}>Prio 3</option>
-    </select>
-    <button class="rm-btn" onclick="this.parentElement.remove()">×</button>
-  `;
+  const id=workRowCount++;
+  const row=document.createElement('div');
+  row.className='work-edit-row';
+  row.innerHTML=`
+    <input type="text"   id="wt-${id}" placeholder="Titel" value="${w?w.title.replace(/"/g,'&quot;'):''}">
+    <input type="number" id="wy-${id}" placeholder="Jahr"  value="${w?w.year:''}" min="1000" max="2099">
+    <select id="wr-${id}"><option value="no" ${w&&!w.read?'selected':''}>Nicht gelesen</option><option value="yes" ${w&&w.read?'selected':''}>Gelesen</option></select>
+    <select id="wp-${id}"><option value="" ${!w||!w.tbr?'selected':''}>—</option><option value="1" ${w&&w.tbr==1?'selected':''}>Prio 1</option><option value="2" ${w&&w.tbr==2?'selected':''}>Prio 2</option><option value="3" ${w&&w.tbr==3?'selected':''}>Prio 3</option></select>
+    <button class="rm-btn" onclick="this.parentElement.remove()">×</button>`;
   document.getElementById('works-editor').appendChild(row);
 }
-
 function saveAuthor() {
-  const name = document.getElementById('m-name').value.trim();
-  if (!name) { document.getElementById('m-name').focus(); return; }
-
-  const works = [];
-  document.querySelectorAll('.work-edit-row').forEach(row => {
-    const ids = row.querySelector('input[type=text]').id.replace('wt-','');
-    const t = document.getElementById('wt-'+ids)?.value.trim();
-    if (!t) return;
-    const pv = document.getElementById('wp-'+ids)?.value;
-    works.push({
-      title: t,
-      year: parseInt(document.getElementById('wy-'+ids)?.value) || '',
-      read: document.getElementById('wr-'+ids)?.value === 'yes',
-      tbr: pv ? parseInt(pv) : null,
-    });
+  const name=document.getElementById('m-name').value.trim();
+  if(!name){ document.getElementById('m-name').focus(); return; }
+  const works=[];
+  document.querySelectorAll('.work-edit-row').forEach(row=>{
+    const id=row.querySelector('input[type=text]').id.replace('wt-','');
+    const t=document.getElementById('wt-'+id)?.value.trim();
+    if(!t) return;
+    const pv=document.getElementById('wp-'+id)?.value;
+    works.push({title:t,year:parseInt(document.getElementById('wy-'+id)?.value)||'',read:document.getElementById('wr-'+id)?.value==='yes',tbr:pv?parseInt(pv):null});
   });
-
-  if (editingId) {
-    const idx = authors.findIndex(a => a.id === editingId);
-    if (idx > -1) {
-      authors[idx] = { ...authors[idx],
-        name, years: document.getElementById('m-years').value,
-        country: document.getElementById('m-country').value || 'Unbekannt',
-        genres: document.getElementById('m-genres').value.split(',').map(s=>s.trim()).filter(Boolean),
-        bio: document.getElementById('m-bio').value,
-        works,
-      };
-    }
-  } else {
-    authors.push({
-      id: nextId++,
-      name,
-      years: document.getElementById('m-years').value,
-      country: document.getElementById('m-country').value || 'Unbekannt',
-      genres: document.getElementById('m-genres').value.split(',').map(s=>s.trim()).filter(Boolean),
-      bio: document.getElementById('m-bio').value,
-      works,
-    });
-  }
-  closeModal();
-  render();
+  const entry={id:editingId||nextId,name,years:document.getElementById('m-years').value,country:document.getElementById('m-country').value||'Unbekannt',genres:document.getElementById('m-genres').value.split(',').map(s=>s.trim()).filter(Boolean),bio:document.getElementById('m-bio').value,works};
+  if(editingId){ const idx=authors.findIndex(a=>a.id===editingId); if(idx>-1) authors[idx]=entry; }
+  else{ authors.push(entry); nextId++; }
+  saveAuthors(); closeModal(); render();
 }
-
-// Close modal on bg click
-document.getElementById('modal-bg').addEventListener('click', function(e) {
-  if (e.target === this) closeModal();
-});
-
+document.getElementById('modal-bg').addEventListener('click',function(e){ if(e.target===this) closeModal(); });
 render();
 </script>
 </body>
