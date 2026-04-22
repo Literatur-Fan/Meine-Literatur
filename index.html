@@ -161,6 +161,16 @@ main{padding:1.5rem 2rem 4rem;max-width:1100px;margin:0 auto}
 .btn-save-m:hover{background:var(--accent2);border-color:var(--accent2)}
 footer{text-align:center;font-size:11px;color:var(--ink4);padding:2rem;border-top:1px solid var(--border);font-style:italic}
 @media(max-width:600px){header{padding:1rem;gap:1rem}main{padding:1rem 1rem 3rem}.stats-bar{padding:.5rem 1rem}.author-grid{grid-template-columns:1fr}.header-title h1{font-size:1.5rem}}
+
+.work-notes{font-size:11px;color:var(--ink2);font-style:italic;padding:3px 0 3px 16px;line-height:1.5;border-bottom:1px solid var(--border)}
+.work-notes:last-child{border-bottom:none}
+.work-notes-input{font-family:var(--ff-body);font-size:11px;font-style:italic;background:var(--paper2);border:1px solid var(--border2);border-radius:3px;padding:3px 6px;width:100%;color:var(--ink2);resize:none;outline:none;margin:2px 0 4px 0}
+.work-notes-input:focus{border-color:var(--accent)}
+.work-read-year{font-size:10px;color:var(--ink3);font-style:italic;white-space:nowrap}
+.lucky-btn{font-family:var(--ff-body);font-size:12px;background:var(--amber-bg);border:1px solid #efac27;border-radius:4px;padding:5px 12px;cursor:pointer;color:#633806;white-space:nowrap}
+.lucky-btn:hover{background:#faeac0}
+.lucky-toast{position:fixed;bottom:2rem;left:50%;transform:translateX(-50%);background:var(--ink);color:var(--paper);padding:.875rem 1.5rem;border-radius:8px;font-size:14px;z-index:2000;max-width:380px;text-align:center;box-shadow:0 4px 24px rgba(0,0,0,.3);line-height:1.5;opacity:0;transition:opacity .3s}
+.lucky-toast.show{opacity:1}
 </style>
 </head>
 <body>
@@ -202,6 +212,7 @@ footer{text-align:center;font-size:11px;color:var(--ink4);padding:2rem;border-to
 
 <div class="stats-bar">
   <span id="stat-text"><strong>51</strong> Schriftsteller  <strong>228</strong> Werke  <strong>46</strong> gelesen  <strong>182</strong> TBR</span>
+  <button class="lucky-btn" onclick="luckyPick()" title="Zufälliges Buch aus Prio-1-TBR">🎲 Zufallstipp</button>
   <span class="save-indicator" id="save-indicator">✓ Gespeichert</span>
 </div>
 
@@ -2309,6 +2320,9 @@ function saveTop10() {
 }
 
 function exportHTML() {
+  var pw = prompt('Bitte Passwort eingeben:');
+  if (pw === null) return;
+  if (pw !== 'Leseliste2026!') { alert('Falsches Passwort.'); return; }
   var src = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
   // Replace DEFAULT_AUTHORS data
   var m1s = src.indexOf('var DEFAULT_AUTHORS = [');
@@ -2580,6 +2594,7 @@ function buildWorkRow(a, w, wi) {
   var right = '';
   if (w.read) {
     right = '<span class="read-check">&#10003;</span>';
+    if (w.readYear) right += '<span class="work-read-year">&nbsp;(' + w.readYear + ')</span>';
   } else {
     right += '<select class="prio-sel" title="TBR-Priorit\u00e4t" onchange="setPrio(' + a.id + ',' + wi + ',this.value)">';
     right += '<option value=""' + (!w.tbr ? ' selected' : '') + '>&#8212;</option>';
@@ -2589,12 +2604,37 @@ function buildWorkRow(a, w, wi) {
     right += '</select>';
     if (w.tbr) right += '<span class="prio-badge p' + w.tbr + '">Prio ' + w.tbr + '</span>';
   }
+  var notesRow = '';
+  if (w.notes) {
+    notesRow = '<div class="work-notes">&#8220;' + esc(w.notes) + '&#8221;</div>';
+  }
   return '<div class="work-row">'
     + '<div class="dot ' + dotCls + '" title="' + dotTitle + '" onclick="toggleRead(' + a.id + ',' + wi + ')"></div>'
     + '<div class="' + titleCls + '">' + esc(w.title) + '</div>'
     + '<div class="work-year">' + w.year + '</div>'
     + right
-    + '</div>';
+    + '</div>'
+    + notesRow;
+}
+
+
+function luckyPick() {
+  var pool = [];
+  authors.forEach(function(a){
+    a.works.forEach(function(w){
+      if (!w.read && w.tbr === 1) pool.push({title: w.title, author: a.name});
+    });
+  });
+  var toast = document.getElementById('lucky-toast');
+  if (!pool.length) {
+    toast.innerHTML = 'Keine Prio-1-B\u00fccher in der TBR! \uD83C\uDF89';
+  } else {
+    var pick = pool[Math.floor(Math.random() * pool.length)];
+    toast.innerHTML = '\uD83C\uDFB2 Dein n\u00e4chstes Buch:<br><strong>' + esc(pick.title) + '</strong><br><span style="font-size:12px;opacity:.8">' + esc(pick.author) + '</span>';
+  }
+  toast.classList.add('show');
+  clearTimeout(toast._t);
+  toast._t = setTimeout(function(){ toast.classList.remove('show'); }, 4000);
 }
 
 function render() {
@@ -2752,6 +2792,12 @@ function addWorkRow(w) {
     + '<select id="wr-' + id + '"><option value="no"' + (w&&!w.read?' selected':'') + '>Nicht gelesen</option><option value="yes"' + (w&&w.read?' selected':'') + '>Gelesen</option></select>'
     + '<select id="wp-' + id + '"><option value=""' + (!w||!w.tbr?' selected':'') + '>&#8212;</option><option value="1"' + (w&&w.tbr==1?' selected':'') + '>Prio 1</option><option value="2"' + (w&&w.tbr==2?' selected':'') + '>Prio 2</option><option value="3"' + (w&&w.tbr==3?' selected':'') + '>Prio 3</option></select>'
     + '<button class="rm-btn" onclick="this.parentElement.remove()">&#215;</button>';
+  // Notes + readYear row below
+  var extra = document.createElement('div');
+  extra.style.cssText = 'grid-column:1/-1;display:grid;grid-template-columns:1fr 80px;gap:6px;margin-bottom:2px';
+  extra.innerHTML = '<textarea id="wn-' + id + '" placeholder="Lesenotiz (optional)..." rows="2" style="font-family:var(--ff-body);font-size:11px;font-style:italic;background:#fff;border:1px solid var(--border2);border-radius:3px;padding:4px 6px;resize:none;outline:none;color:var(--ink2)">' + (w && w.notes ? esc(w.notes) : '') + '</textarea>'
+    + '<input type="number" id="wry-' + id + '" placeholder="Gelesen" value="' + (w && w.readYear ? w.readYear : '') + '" min="1900" max="2099" style="font-family:var(--ff-body);background:#fff;border:1px solid var(--border2);border-radius:3px;padding:5px 7px;font-size:12px;color:var(--ink);outline:none">';
+  row.appendChild(extra);
   document.getElementById('works-editor').appendChild(row);
 }
 function saveAuthor() {
@@ -2763,7 +2809,12 @@ function saveAuthor() {
     var t = (document.getElementById('wt-'+id)||{value:''}).value.trim();
     if (!t) return;
     var pv = (document.getElementById('wp-'+id)||{value:''}).value;
-    works.push({title:t, year:parseInt((document.getElementById('wy-'+id)||{value:''}).value)||'', read:(document.getElementById('wr-'+id)||{value:'no'}).value==='yes', tbr:pv?parseInt(pv):null});
+    var notes = ((document.getElementById('wn-'+id)||{value:''}).value||'').trim();
+    var readYearVal = (document.getElementById('wry-'+id)||{value:''}).value;
+    var workObj = {title:t, year:parseInt((document.getElementById('wy-'+id)||{value:''}).value)||'', read:(document.getElementById('wr-'+id)||{value:'no'}).value==='yes', tbr:pv?parseInt(pv):null};
+    if (notes) workObj.notes = notes;
+    if (readYearVal) workObj.readYear = parseInt(readYearVal);
+    works.push(workObj);
   });
   var entry = {id:editingId||nextId, name:name, years:document.getElementById('m-years').value, country:document.getElementById('m-country').value||'Unbekannt', genres:document.getElementById('m-genres').value.split(',').map(function(s){return s.trim();}).filter(Boolean), bio:document.getElementById('m-bio').value, works:works};
   if (editingId) {
@@ -2778,4 +2829,5 @@ render();
 </script>
 
 
+<div class="lucky-toast" id="lucky-toast"></div>
 </body></html>
